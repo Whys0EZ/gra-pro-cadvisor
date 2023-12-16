@@ -1,0 +1,38 @@
+scrape_configs:
+- job_name: cadvisor
+  scrape_interval: 5s
+  static_configs:
+  - targets:
+    - cadvisor:8080
+- job_name: node-exporter
+  scrape_interval: 5s
+  static_configs:
+  - targets:
+    - '192.168.156.89:9100'
+    - '192.168.156.88:9182'
+    - '192.168.156.87:161'
+#    labels:
+#      instance: PC
+#  - targets:
+#    [- '192.168.145.192:9100']
+#    labels:
+#      instance: PC-AD
+
+- job_name: snmp
+  scrape_interval: 60s
+  static_configs:
+  - targets:
+    - '192.168.156.87:161'
+    - '172.28.20.199:161'
+
+  metrics_path: /snmp
+  params:
+    auth: [public_v2]
+    module: [if_mib]
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 192.168.156.89:9116
