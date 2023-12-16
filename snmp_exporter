@@ -1,0 +1,29 @@
+## Download
+wget  https://github.com/prometheus/snmp_exporter/releases/download/v0.25.0/snmp_exporter-0.25.0.linux-amd64.tar.gz
+
+tar -zxf snmp_exporter-0.25.0.linux-amd64.tar.gz
+
+cp -r snmp_exporter-0.25.0.linux-amd64 /home/snmp_exporter
+
+#Config service
+nano /etc/systemd/system/snmp_exporter.service
+
+[Unit]
+Description=SNMP Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Restart=on-failure
+#Group=root
+Type=simple
+ExecStart=/home/snmp_exporter/snmp_exporter --config.file=/home/snmp_exporter/snmp.yml
+[Install]
+WantedBy=multi-user.target
+
+
+-----------------------------------------------------------
+systemctl daemon-reload
+systemctl restart snmp_exporter.service
+systemctl status snmp_exporter.service
